@@ -6,6 +6,12 @@
     <title>BleyzLab | Indie Studio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    
     <style>
         :root {
             --primary: #0aff9d;
@@ -1008,12 +1014,12 @@
             
             <form class="auth-form active" id="loginForm">
                 <div class="form-group">
-                    <label for="loginUsername">Username</label>
-                    <input type="text" id="loginUsername" class="form-control" placeholder="Enter your username">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required>
                 </div>
                 <div class="form-group">
                     <label for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password">
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required>
                 </div>
                 <button type="submit" class="btn">Login</button>
                 <div class="auth-message" id="loginMessage"></div>
@@ -1021,16 +1027,20 @@
             
             <form class="auth-form" id="registerForm">
                 <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
                     <label for="registerUsername">Username</label>
-                    <input type="text" id="registerUsername" class="form-control" placeholder="Choose a username">
+                    <input type="text" id="registerUsername" class="form-control" placeholder="Choose a username" required>
                 </div>
                 <div class="form-group">
                     <label for="registerPassword">Password</label>
-                    <input type="password" id="registerPassword" class="form-control" placeholder="Create a password">
+                    <input type="password" id="registerPassword" class="form-control" placeholder="Create a password" required>
                 </div>
                 <div class="form-group">
                     <label for="registerConfirm">Confirm Password</label>
-                    <input type="password" id="registerConfirm" class="form-control" placeholder="Repeat your password">
+                    <input type="password" id="registerConfirm" class="form-control" placeholder="Repeat your password" required>
                 </div>
                 <button type="submit" class="btn">Register</button>
                 <div class="auth-message" id="registerMessage"></div>
@@ -1046,27 +1056,11 @@
         </div>
         
         <div class="admin-section">
-            <h3>User Management</h3>
-            <div class="user-list" id="userList">
-                <!-- Users will be loaded here -->
-            </div>
-            <button class="btn" id="addUserBtn">Add User</button>
-        </div>
-        
-        <div class="admin-section">
             <h3>Blog Management</h3>
             <div class="blog-list" id="blogList">
                 <!-- Blogs will be loaded here -->
             </div>
             <button class="btn" id="addBlogBtn">Add Blog</button>
-        </div>
-        
-        <div class="admin-section">
-            <h3>Project Management</h3>
-            <div class="project-list" id="projectList">
-                <!-- Projects will be loaded here -->
-            </div>
-            <button class="btn" id="addProjectBtn">Add Project</button>
         </div>
     </div>
     
@@ -1078,22 +1072,15 @@
             <form id="blogForm">
                 <div class="form-group">
                     <label for="blogTitle">Title</label>
-                    <input type="text" id="blogTitle" class="form-control" placeholder="Enter blog title">
+                    <input type="text" id="blogTitle" class="form-control" placeholder="Enter blog title" required>
                 </div>
                 <div class="form-group">
                     <label for="blogCategory">Category</label>
-                    <input type="text" id="blogCategory" class="form-control" placeholder="Enter blog category">
+                    <input type="text" id="blogCategory" class="form-control" placeholder="Enter blog category" required>
                 </div>
                 <div class="form-group">
                     <label for="blogContent">Content</label>
-                    <textarea id="blogContent" class="form-control" rows="4" placeholder="Enter blog content"></textarea>
-                </div>
-                <div class="image-upload">
-                    <label>Blog Image</label>
-                    <input type="file" id="blogImageUpload" accept="image/*">
-                    <div class="image-upload-preview" id="blogImagePreview">
-                        <div class="image-upload-text">Click to upload image</div>
-                    </div>
+                    <textarea id="blogContent" class="form-control" rows="4" placeholder="Enter blog content" required></textarea>
                 </div>
                 <button type="submit" class="btn">Save Blog</button>
             </form>
@@ -1197,51 +1184,27 @@
     
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // Инициализация Particles.js
-        particlesJS('particles-js', {
-            particles: {
-                number: { value: 80, density: { enable: true, value_area: 800 } },
-                color: { value: "#00f3ff" },
-                shape: { type: "circle", stroke: { width: 0, color: "#000000" } },
-                opacity: { value: 0.5, random: true },
-                size: { value: 3, random: true },
-                line_linked: {
-                    enable: true,
-                    distance: 150,
-                    color: "#b967ff",
-                    opacity: 0.4,
-                    width: 1
-                },
-                move: {
-                    enable: true,
-                    speed: 2,
-                    direction: "none",
-                    random: true,
-                    straight: false,
-                    out_mode: "out",
-                    bounce: false
-                }
-            },
-            interactivity: {
-                detect_on: "canvas",
-                events: {
-                    onhover: { enable: true, mode: "grab" },
-                    onclick: { enable: true, mode: "push" },
-                    resize: true
-                },
-                modes: {
-                    grab: { distance: 140, line_linked: { opacity: 1 } },
-                    push: { particles_nb: 4 }
-                }
-            },
-            retina_detect: true
-        });
-        
+        // =====================
+        // ВАШ КОНФИГ FIREBASE
+        // =====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyB25S9Akz-iYV3NL0M1DC43EuDqb4h93k4",
+            authDomain: "bleyzlab.firebaseapp.com",
+            projectId: "bleyzlab",
+            storageBucket: "bleyzlab.firebasestorage.app",
+            messagingSenderId: "13076909406",
+            appId: "1:13076909406:web:05ce313ca2be03066453cf",
+            measurementId: "G-7ZQSKJH2LQ"
+        };
+
+        // Инициализация Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
         // Глобальные переменные
         let currentUser = null;
-        let users = [];
         let blogs = [];
-        let projects = [];
         let blogPage = 1;
         const blogsPerPage = 3;
 
@@ -1260,19 +1223,13 @@
         const adminPanel = document.getElementById('adminPanel');
         const adminToggle = document.getElementById('adminToggle');
         const closeAdmin = document.getElementById('closeAdmin');
-        const userList = document.getElementById('userList');
         const blogList = document.getElementById('blogList');
-        const projectList = document.getElementById('projectList');
         const blogGrid = document.getElementById('blogGrid');
         const projectGrid = document.getElementById('projectGrid');
-        const addUserBtn = document.getElementById('addUserBtn');
         const addBlogBtn = document.getElementById('addBlogBtn');
-        const addProjectBtn = document.getElementById('addProjectBtn');
         const blogModal = document.getElementById('blogModal');
         const closeBlogModal = document.getElementById('closeBlogModal');
         const blogForm = document.getElementById('blogForm');
-        const blogImageUpload = document.getElementById('blogImageUpload');
-        const blogImagePreview = document.getElementById('blogImagePreview');
         const blogViewModal = document.getElementById('blogViewModal');
         const closeBlogViewModal = document.getElementById('closeBlogViewModal');
         const blogViewImage = document.getElementById('blogViewImage');
@@ -1284,54 +1241,131 @@
         
         // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', function() {
-            // Загрузка данных из localStorage
-            loadFromLocalStorage();
+            // Инициализация Particles.js
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: "#00f3ff" },
+                    shape: { type: "circle", stroke: { width: 0, color: "#000000" } },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#b967ff",
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: true,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "grab" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
+                    },
+                    modes: {
+                        grab: { distance: 140, line_linked: { opacity: 1 } },
+                        push: { particles_nb: 4 }
+                    }
+                },
+                retina_detect: true
+            });
             
-            // Проверка авторизации
-            if (!currentUser) {
-                authOverlay.style.display = 'flex';
-            } else {
-                authOverlay.style.display = 'none';
-                updateUserUI();
-            }
+            // Проверка авторизации при загрузке
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    currentUser = user;
+                    updateUserUI();
+                    authOverlay.style.display = 'none';
+                } else {
+                    currentUser = null;
+                    updateUserUI();
+                }
+                
+                // Всегда загружаем блоги
+                loadBlogs();
+            });
             
-            // Загружаем блоги и проекты
-            renderBlogs();
+            // Загружаем проекты (статичные, без Firebase)
             renderProjects();
         });
         
-        // Загрузка данных из localStorage
-        function loadFromLocalStorage() {
-            const savedUsers = localStorage.getItem('bleyzlab_users');
-            const savedBlogs = localStorage.getItem('bleyzlab_blogs');
-            const savedProjects = localStorage.getItem('bleyzlab_projects');
-            const savedUser = localStorage.getItem('bleyzlab_currentUser');
+        // Загрузка блогов из Firebase
+        async function loadBlogs() {
+            try {
+                const snapshot = await db.collection("blogs")
+                    .orderBy("date", "desc")
+                    .limit(blogPage * blogsPerPage)
+                    .get();
+                
+                blogs = [];
+                snapshot.forEach(doc => {
+                    const blog = doc.data();
+                    blog.id = doc.id;
+                    blogs.push(blog);
+                });
+                
+                renderBlogs();
+            } catch (error) {
+                console.error("Ошибка загрузки блогов:", error);
+                blogGrid.innerHTML = '<p>Не удалось загрузить блоги. Пожалуйста, попробуйте позже.</p>';
+            }
+        }
+        
+        // Отображение блогов на главной странице
+        function renderBlogs() {
+            blogGrid.innerHTML = '';
             
-            users = savedUsers ? JSON.parse(savedUsers) : [
-                { username: "Andrey_Tech", password: "12341234", role: "user", avatar: "AT" },
-                { username: "Andrey_Admin", password: "43214321", role: "admin", avatar: "AA" }
-            ];
+            if (blogs.length === 0) {
+                blogGrid.innerHTML = '<p>Пока нет блогов. Будьте первым, кто добавит запись!</p>';
+                return;
+            }
             
-            blogs = savedBlogs ? JSON.parse(savedBlogs) : [
-                {
-                    id: 1,
-                    title: "Getting Started with Game Development",
-                    category: "Tutorial",
-                    content: "My journey into game development and the tools I use daily. Creating games has always been my passion, and in this blog, I'll share my experiences and tips for beginners who want to start their journey in game development. We'll cover everything from choosing the right engine to publishing your first game.",
-                    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                    date: "May 15, 2023"
-                },
-                {
-                    id: 2,
-                    title: "The Art of Pixel Art",
-                    category: "Design",
-                    content: "Exploring the techniques and tools for creating beautiful pixel art. Pixel art has a unique charm that brings nostalgia and simplicity to modern games. In this detailed guide, I'll show you how to master the art of pixel creation, from basic principles to advanced animation techniques.",
-                    image: "https://images.unsplash.com/photo-1546443046-ed1ce6ffd1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                    date: "June 3, 2023"
-                }
-            ];
+            blogs.forEach(blog => {
+                const card = document.createElement('div');
+                card.className = 'blog-card';
+                card.dataset.id = blog.id;
+                card.innerHTML = `
+                    <div class="blog-image">
+                        <img src="${blog.image}" alt="${blog.title}">
+                        <div class="blog-category">${blog.category}</div>
+                    </div>
+                    <div class="blog-content">
+                        <h3>${blog.title}</h3>
+                        <p>${blog.content.substring(0, 100)}...</p>
+                        <div class="blog-date">${blog.date}</div>
+                    </div>
+                `;
+                blogGrid.appendChild(card);
+            });
             
-            projects = savedProjects ? JSON.parse(savedProjects) : [
+            // Обработчики событий для открытия блога
+            document.querySelectorAll('.blog-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const blogId = this.dataset.id;
+                    const blog = blogs.find(b => b.id === blogId);
+                    if (blog) {
+                        openBlogView(blog);
+                    }
+                });
+            });
+        }
+        
+        // Отображение проектов (статичных)
+        function renderProjects() {
+            projectGrid.innerHTML = '';
+            
+            const projects = [
                 {
                     id: 1,
                     name: "Nexus Engine",
@@ -1355,91 +1389,6 @@
                 }
             ];
             
-            currentUser = savedUser ? JSON.parse(savedUser) : null;
-            
-            // Сохранение начальных данных
-            saveToLocalStorage();
-        }
-        
-        // Сохранение данных в localStorage
-        function saveToLocalStorage() {
-            localStorage.setItem('bleyzlab_users', JSON.stringify(users));
-            localStorage.setItem('bleyzlab_blogs', JSON.stringify(blogs));
-            localStorage.setItem('bleyzlab_projects', JSON.stringify(projects));
-            
-            if (currentUser) {
-                localStorage.setItem('bleyzlab_currentUser', JSON.stringify(currentUser));
-            } else {
-                localStorage.removeItem('bleyzlab_currentUser');
-            }
-        }
-        
-        // Функции для работы с UI
-        function updateUserUI() {
-            if (currentUser) {
-                userNav.style.display = 'flex';
-                authToggle.textContent = 'Logout';
-                userAvatar.textContent = currentUser.avatar;
-                
-                // Показываем кнопку админ-панели только для админов
-                if (currentUser.role === 'admin') {
-                    adminToggle.style.display = 'block';
-                } else {
-                    adminToggle.style.display = 'none';
-                }
-            } else {
-                userNav.style.display = 'none';
-                authToggle.textContent = 'Login';
-                adminToggle.style.display = 'none';
-            }
-        }
-        
-        function renderBlogs() {
-            blogGrid.innerHTML = '';
-            
-            // Определяем, сколько блогов показывать
-            const blogsToShow = Math.min(blogPage * blogsPerPage, blogs.length);
-            const visibleBlogs = blogs.slice(0, blogsToShow);
-            
-            visibleBlogs.forEach(blog => {
-                const card = document.createElement('div');
-                card.className = 'blog-card';
-                card.dataset.id = blog.id;
-                card.innerHTML = `
-                    <div class="blog-image">
-                        <img src="${blog.image}" alt="${blog.title}">
-                        <div class="blog-category">${blog.category}</div>
-                    </div>
-                    <div class="blog-content">
-                        <h3>${blog.title}</h3>
-                        <p>${blog.content}</p>
-                        <div class="blog-date">${blog.date}</div>
-                    </div>
-                `;
-                blogGrid.appendChild(card);
-            });
-            
-            // Показывать кнопку "Load More" только если есть еще блоги
-            if (blogsToShow < blogs.length) {
-                loadMoreBtn.style.display = 'block';
-            } else {
-                loadMoreBtn.style.display = 'none';
-            }
-            
-            // Добавляем обработчики событий для открытия детального просмотра
-            document.querySelectorAll('.blog-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const blogId = parseInt(this.dataset.id);
-                    const blog = blogs.find(b => b.id === blogId);
-                    if (blog) {
-                        openBlogView(blog);
-                    }
-                });
-            });
-        }
-        
-        function renderProjects() {
-            projectGrid.innerHTML = '';
             projects.forEach(project => {
                 const card = document.createElement('div');
                 card.className = 'project-card';
@@ -1455,142 +1404,23 @@
             });
         }
         
-        function renderUsers() {
-            userList.innerHTML = '';
-            users.forEach((user, index) => {
-                const userItem = document.createElement('div');
-                userItem.className = 'user-item';
-                userItem.innerHTML = `
-                    <h4>${user.username}</h4>
-                    <div class="user-info">
-                        <span>Role: ${user.role}</span>
-                        <span class="user-role">${user.role}</span>
-                    </div>
-                    <div class="admin-controls">
-                        <button class="admin-btn" onclick="editUser(${index})">Edit</button>
-                        <button class="admin-btn btn-danger" onclick="deleteUser(${index})">Delete</button>
-                    </div>
-                `;
-                userList.appendChild(userItem);
-            });
-        }
-        
-        function renderBlogsAdmin() {
-            blogList.innerHTML = '';
-            blogs.forEach((blog, index) => {
-                const blogItem = document.createElement('div');
-                blogItem.className = 'blog-item';
-                blogItem.innerHTML = `
-                    <h4>${blog.title}</h4>
-                    <div class="blog-info">
-                        <span>${blog.category}</span>
-                        <span>${blog.date}</span>
-                    </div>
-                    <div class="admin-controls">
-                        <button class="admin-btn" onclick="editBlog(${index})">Edit</button>
-                        <button class="admin-btn btn-danger" onclick="deleteBlog(${index})">Delete</button>
-                    </div>
-                `;
-                blogList.appendChild(blogItem);
-            });
-        }
-        
-        function renderProjectsAdmin() {
-            projectList.innerHTML = '';
-            projects.forEach((project, index) => {
-                const projectItem = document.createElement('div');
-                projectItem.className = 'project-item';
-                projectItem.innerHTML = `
-                    <h4>${project.name}</h4>
-                    <div class="project-info">
-                        <span>${project.status}</span>
-                        <span>ID: ${project.id}</span>
-                    </div>
-                    <div class="admin-controls">
-                        <button class="admin-btn" onclick="editProject(${index})">Edit</button>
-                        <button class="admin-btn btn-danger" onclick="deleteProject(${index})">Delete</button>
-                    </div>
-                `;
-                projectList.appendChild(projectItem);
-            });
-        }
-        
-        // Функции удаления
-        function deleteUser(index) {
-            if (confirm(`Are you sure you want to delete user ${users[index].username}?`)) {
-                users.splice(index, 1);
-                renderUsers();
-                saveToLocalStorage();
+        // Обновление UI в зависимости от авторизации
+        function updateUserUI() {
+            if (currentUser) {
+                userNav.style.display = 'flex';
+                authToggle.textContent = 'Logout';
+                userAvatar.textContent = currentUser.email.charAt(0).toUpperCase();
+                
+                // Для простоты - все пользователи видят админ-панель
+                adminToggle.style.display = 'block';
+            } else {
+                userNav.style.display = 'none';
+                authToggle.textContent = 'Login';
+                adminToggle.style.display = 'none';
             }
         }
         
-        function deleteBlog(index) {
-            if (confirm(`Are you sure you want to delete blog "${blogs[index].title}"?`)) {
-                blogs.splice(index, 1);
-                renderBlogsAdmin();
-                renderBlogs();
-                saveToLocalStorage();
-            }
-        }
-        
-        function deleteProject(index) {
-            if (confirm(`Are you sure you want to delete project "${projects[index].name}"?`)) {
-                projects.splice(index, 1);
-                renderProjectsAdmin();
-                renderProjects();
-                saveToLocalStorage();
-            }
-        }
-        
-        // Функции редактирования
-        function editUser(index) {
-            const newRole = prompt("Enter new role (admin/user):", users[index].role);
-            if (newRole && ["admin", "user"].includes(newRole)) {
-                users[index].role = newRole;
-                renderUsers();
-                saveToLocalStorage();
-            } else if (newRole) {
-                alert("Invalid role. Please enter 'admin' or 'user'.");
-            }
-        }
-        
-        function editBlog(index) {
-            const newTitle = prompt("Enter new blog title:", blogs[index].title);
-            if (newTitle) {
-                blogs[index].title = newTitle;
-                renderBlogsAdmin();
-                renderBlogs();
-                saveToLocalStorage();
-            }
-            
-            const newContent = prompt("Enter new blog content:", blogs[index].content);
-            if (newContent) {
-                blogs[index].content = newContent;
-                renderBlogsAdmin();
-                renderBlogs();
-                saveToLocalStorage();
-            }
-        }
-        
-        function editProject(index) {
-            const newName = prompt("Enter new project name:", projects[index].name);
-            if (newName) {
-                projects[index].name = newName;
-                renderProjectsAdmin();
-                renderProjects();
-                saveToLocalStorage();
-            }
-            
-            const newDesc = prompt("Enter new project description:", projects[index].description);
-            if (newDesc) {
-                projects[index].description = newDesc;
-                renderProjectsAdmin();
-                renderProjects();
-                saveToLocalStorage();
-            }
-        }
-        
-        // Открытие детального просмотра блога
+        // Открытие просмотра блога
         function openBlogView(blog) {
             blogViewImage.src = blog.image;
             blogViewTitle.textContent = blog.title;
@@ -1605,9 +1435,7 @@
             e.preventDefault();
             if (currentUser) {
                 // Выход из системы
-                currentUser = null;
-                localStorage.removeItem('bleyzlab_currentUser');
-                updateUserUI();
+                auth.signOut();
                 authOverlay.style.display = 'flex';
             } else {
                 // Показать форму входа
@@ -1619,6 +1447,7 @@
             authOverlay.style.display = 'none';
         });
         
+        // Переключение между вкладками входа и регистрации
         authTabs.forEach(tab => {
             tab.addEventListener('click', function() {
                 const tabId = this.getAttribute('data-tab');
@@ -1637,115 +1466,115 @@
             });
         });
         
-        loginForm.addEventListener('submit', function(e) {
+        // Вход в систему
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            const username = document.getElementById('loginUsername').value;
+            const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
-            // Поиск пользователя
-            const user = users.find(u => u.username === username && u.password === password);
-            
-            if (user) {
-                currentUser = user;
-                localStorage.setItem('bleyzlab_currentUser', JSON.stringify(user));
-                updateUserUI();
-                authOverlay.style.display = 'none';
-                
-                // Показываем сообщение об успехе
-                loginMessage.textContent = 'Login successful!';
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                loginMessage.textContent = 'Вход выполнен успешно!';
                 loginMessage.className = 'auth-message success';
                 loginMessage.style.display = 'block';
-            } else {
-                // Показываем сообщение об ошибке
-                loginMessage.textContent = 'Invalid username or password';
+            } catch (error) {
+                loginMessage.textContent = error.message;
                 loginMessage.className = 'auth-message error';
                 loginMessage.style.display = 'block';
             }
         });
         
-        registerForm.addEventListener('submit', function(e) {
+        // Регистрация нового пользователя
+        registerForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            const email = document.getElementById('registerEmail').value;
             const username = document.getElementById('registerUsername').value;
             const password = document.getElementById('registerPassword').value;
             const confirm = document.getElementById('registerConfirm').value;
             
-            // Проверка паролей
             if (password !== confirm) {
-                registerMessage.textContent = 'Passwords do not match';
+                registerMessage.textContent = "Пароли не совпадают";
                 registerMessage.className = 'auth-message error';
                 registerMessage.style.display = 'block';
                 return;
             }
             
-            // Проверка существующего пользователя
-            if (users.some(u => u.username === username)) {
-                registerMessage.textContent = 'Username already exists';
+            try {
+                await auth.createUserWithEmailAndPassword(email, password);
+                registerMessage.textContent = 'Регистрация успешна!';
+                registerMessage.className = 'auth-message success';
+                registerMessage.style.display = 'block';
+                
+                // Переключиться на вкладку входа
+                authTabs.forEach(t => t.classList.remove('active'));
+                document.querySelector('.auth-tab[data-tab="login"]').classList.add('active');
+                authForms.forEach(form => form.classList.remove('active'));
+                loginForm.classList.add('active');
+                
+            } catch (error) {
+                registerMessage.textContent = error.message;
                 registerMessage.className = 'auth-message error';
                 registerMessage.style.display = 'block';
-                return;
             }
-            
-            // Создание нового пользователя
-            const newUser = {
-                username,
-                password,
-                role: 'user',
-                avatar: username.charAt(0).toUpperCase()
-            };
-            
-            users.push(newUser);
-            saveToLocalStorage();
-            
-            // Очистка формы
-            this.reset();
-            
-            // Показываем сообщение об успехе
-            registerMessage.textContent = 'Registration successful! You can now login.';
-            registerMessage.className = 'auth-message success';
-            registerMessage.style.display = 'block';
-            
-            // Переключение на вкладку входа
-            authTabs.forEach(t => t.classList.remove('active'));
-            document.querySelector('.auth-tab[data-tab="login"]').classList.add('active');
-            
-            authForms.forEach(form => form.classList.remove('active'));
-            loginForm.classList.add('active');
         });
         
+        // Открытие админ-панели
         adminToggle.addEventListener('click', function() {
-            adminPanel.classList.add('active');
-            renderUsers();
-            renderBlogsAdmin();
-            renderProjectsAdmin();
+            if (currentUser) {
+                adminPanel.classList.add('active');
+                loadBlogsAdmin();
+            }
         });
         
+        // Закрытие админ-панели
         closeAdmin.addEventListener('click', function() {
             adminPanel.classList.remove('active');
         });
         
-        addUserBtn.addEventListener('click', function() {
-            const username = prompt('Enter new username:');
-            if (username) {
-                const newUser = {
-                    username,
-                    password: 'temp123',
-                    role: 'user',
-                    avatar: username.charAt(0).toUpperCase()
-                };
+        // Загрузка блогов для админ-панели
+        async function loadBlogsAdmin() {
+            try {
+                const snapshot = await db.collection("blogs").get();
+                blogList.innerHTML = '';
                 
-                users.push(newUser);
-                renderUsers();
-                saveToLocalStorage();
-                
-                alert(`User ${username} created with password "temp123"`);
+                snapshot.forEach(doc => {
+                    const blog = doc.data();
+                    const blogItem = document.createElement('div');
+                    blogItem.className = 'blog-item';
+                    blogItem.innerHTML = `
+                        <h4>${blog.title}</h4>
+                        <div class="blog-info">
+                            <span>${blog.category}</span>
+                            <span>${blog.date}</span>
+                        </div>
+                        <div class="admin-controls">
+                            <button class="admin-btn btn-danger" onclick="deleteBlog('${doc.id}')">Delete</button>
+                        </div>
+                    `;
+                    blogList.appendChild(blogItem);
+                });
+            } catch (error) {
+                console.error("Ошибка загрузки блогов:", error);
             }
-        });
+        }
         
+        // Удаление блога
+        window.deleteBlog = async function(blogId) {
+            if (confirm("Вы уверены, что хотите удалить этот блог?")) {
+                try {
+                    await db.collection("blogs").doc(blogId).delete();
+                    loadBlogsAdmin(); // Обновляем список
+                    loadBlogs(); // Обновляем главную страницу
+                } catch (error) {
+                    console.error("Ошибка удаления блога:", error);
+                }
+            }
+        }
+        
+        // Открытие модалки для добавления блога
         addBlogBtn.addEventListener('click', function() {
-            // Показать модальное окно для добавления блога
             blogModal.classList.add('active');
             blogForm.reset();
-            blogImagePreview.innerHTML = '<div class="image-upload-text">Click to upload image</div>';
         });
         
         closeBlogModal.addEventListener('click', function() {
@@ -1756,93 +1585,43 @@
             blogViewModal.classList.remove('active');
         });
         
-        blogImagePreview.addEventListener('click', function() {
-            blogImageUpload.click();
-        });
-        
-        blogImageUpload.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    blogImagePreview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        blogForm.addEventListener('submit', function(e) {
+        // Сохранение нового блога
+        blogForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const title = document.getElementById('blogTitle').value;
             const category = document.getElementById('blogCategory').value;
             const content = document.getElementById('blogContent').value;
-            const imageFile = blogImageUpload.files[0];
             
-            if (!title || !category || !content) {
-                alert('Please fill all fields');
-                return;
-            }
+            // Используем дефолтное изображение
+            const imageUrl = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
             
-            let imageSrc = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
-            
-            if (imageFile) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    imageSrc = event.target.result;
-                    saveBlog(title, category, content, imageSrc);
-                };
-                reader.readAsDataURL(imageFile);
-            } else {
-                saveBlog(title, category, content, imageSrc);
-            }
-        });
-        
-        function saveBlog(title, category, content, imageSrc) {
-            const newBlog = {
-                id: Date.now(), // Используем timestamp для уникального ID
-                title,
-                category,
-                content,
-                image: imageSrc,
-                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-            };
-            
-            blogs.push(newBlog);
-            blogModal.classList.remove('active');
-            renderBlogsAdmin();
-            renderBlogs();
-            saveToLocalStorage();
-            
-            alert(`Blog "${title}" added successfully!`);
-        }
-        
-        addProjectBtn.addEventListener('click', function() {
-            const name = prompt('Enter project name:');
-            if (name) {
-                const description = prompt('Enter project description:');
-                const icon = prompt('Enter icon class (e.g., fas fa-code):', 'fas fa-code');
-                const status = prompt('Enter project status:', 'In Development');
+            try {
+                await db.collection("blogs").add({
+                    title: title,
+                    category: category,
+                    content: content,
+                    image: imageUrl,
+                    date: new Date().toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric'
+                    })
+                });
                 
-                const newProject = {
-                    id: Date.now(),
-                    name,
-                    description,
-                    icon,
-                    status
-                };
-                
-                projects.push(newProject);
-                renderProjectsAdmin();
-                renderProjects();
-                saveToLocalStorage();
-                
-                alert(`Project "${name}" added successfully!`);
+                blogModal.classList.remove('active');
+                loadBlogsAdmin();
+                loadBlogs();
+                alert("Блог успешно добавлен!");
+            } catch (error) {
+                console.error("Ошибка при добавлении блога:", error);
+                alert("Произошла ошибка при добавлении блога");
             }
         });
         
+        // Загрузка дополнительных блогов
         loadMoreBtn.addEventListener('click', function() {
             blogPage++;
-            renderBlogs();
+            loadBlogs();
         });
         
         // Плавная прокрутка для навигационных ссылок
